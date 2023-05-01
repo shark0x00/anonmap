@@ -59,9 +59,10 @@ install (){
     local PACKAGE1="dnscrypt-proxy"
     local PACKAGE2="proxychains"
     local PACKAGE3="jq"
+    local PACKAGE4="nmap"
 
     # installing packages
-    echo -e "${CYAN}- SCRIPT OUTPUT: installing "$PACKAGE0" "$PACKAGE1" "$PACKAGE2" "$PACKAGE3" ... ${RESET}"
+    echo -e "${CYAN}- SCRIPT OUTPUT: installing "$PACKAGE0" "$PACKAGE1" "$PACKAGE2" "$PACKAGE3" "$PACKAGE4" ... ${RESET}"
     sudocheck apt update
     sudocheck apt install -y "$PACKAGE0" "$PACKAGE1" "$PACKAGE2" "$PACKAGE3"
 }
