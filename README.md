@@ -16,6 +16,7 @@ chmod +x anonmap.sh
 
 # Usage
 ```
+./anon.sh [argument]
 -s, --start         starts anonmap"
 -x, --stop          stops anonmap and reverts configuration"
 -l, --leak          checks for potential IP leaks"
