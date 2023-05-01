@@ -2,7 +2,6 @@
 # anonmap V0.1
 # Philipp Fragstein
 # info@stonesec.de
-#
 
 # color code definition
 RED="\033[31m"
