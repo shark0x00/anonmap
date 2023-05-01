@@ -97,34 +97,7 @@ configure (){
     sudocheck cp -p "$PROXYCHAINS_CONFIG" "$BACKUPS_FOLDER/proxychains.conf.bak"
     sudocheck cp -p /etc/resolv.conf "$BACKUPS_FOLDER/resolv.conf.bak"
     sudocheck cp -p /etc/sysctl.conf "$BACKUPS_FOLDER/sysctl.conf.bak"
-
-    # configure dnscrypt 
-    echo -e "${CYAN}- SCRIPT OUTPUT: configuring dnscrypt ${RESET}"
-    if grep -qE "^listen_addresses\s*=\s*\[\s*\]" "$DNSCRYPT_CONFIG"; then
-        sudocheck sed -i "s/listen_addresses = \[\]/listen_addresses = \['127.0.0.1:5353'\]/g" "$DNSCRYPT_CONFIG"
-        echo -e "${CYAN}- SCRIPT OUTPUT: listen_addresses updated to ['127.0.0.1:5353'] ${RESET}"
-        DNSCRYPT_CONFIG_UPDATE=true
-    fi
-    if ! grep -q -E "^proxy\s*=" "$DNSCRYPT_CONFIG"; then
-        sudocheck echo "proxy = '$DNSCRYPT_TOR_SOCKS5_PROXY'" | tee -a "$DNSCRYPT_CONFIG" > /dev/null
-        DNSCRYPT_CONFIG_UPDATE=true
-    fi
-    if ! grep -q -E "^force_tcp\s*=" "$DNSCRYPT_CONFIG"; then
-        sudocheck echo "force_tcp = $DNSCRYPT_FORCE_TCP" | tee -a "$DNSCRYPT_CONFIG" > /dev/null
-        DNSCRYPT_CONFIG_UPDATE=true
-    fi
-    if $DNSCRYPT_CONFIG_UPDATE; then
-        echo -e "${CYAN}- SCRIPT OUTPUT: dnscrypt configuration updated.${RESET}"
-    else
-        echo -e "${CYAN}- SCRIPT OUTPUT: no changes were made to the dnscrypt configuration.${RESET}"
-    fi
-    sudocheck systemctl restart dnscrypt-proxy
-    sudocheck systemctl restart dnscrypt-proxy-resolvconf
-
-    # configure /etc/resolv.conf
-    echo -e "${CYAN}- SCRIPT OUTPUT: backup and configuring /etc/resolv.conf ${RESET}"
-    sudocheck sh -c 'echo "nameserver 127.0.0.1" > /etc/resolv.conf'
-
+ 
     # configure tor
     echo -e "${CYAN}- SCRIPT OUTPUT: configuring tor ${RESET}"
     if ! grep -q "EntryNodes " "$TOR_CONFIG"; then
@@ -144,11 +117,38 @@ configure (){
         TOR_CONFIG_UPDATE=true
     fi
     if $TOR_CONFIG_UPDATE; then
-        echo -e "- ${CYAN}SCRIPT OUTPUT: tor configuration updated. restarting the tor service.${RESET}"
+        echo -e "${CYAN}- SCRIPT OUTPUT: tor configuration updated. restarting the tor service.${RESET}"
     else
         echo -e "${CYAN}- SCRIPT OUTPUT: no changes were made to the tor configuration.${RESET}"
     fi
     sudocheck systemctl restart tor
+
+    # configure dnscrypt 
+    echo -e "${CYAN}- SCRIPT OUTPUT: configuring dnscrypt ${RESET}"
+    if grep -qE "^listen_addresses\s*=\s*\[\s*\]" "$DNSCRYPT_CONFIG"; then
+        sudocheck sed -i "s/listen_addresses = \[\]/listen_addresses = \['127.0.0.1:5353'\]/g" "$DNSCRYPT_CONFIG"
+        echo -e "${CYAN}- SCRIPT OUTPUT: listen_addresses updated to ['127.0.0.1:5353'] ${RESET}"
+        DNSCRYPT_CONFIG_UPDATE=true
+    fi
+    if ! grep -q -E "^proxy\s*=" "$DNSCRYPT_CONFIG"; then
+        sudocheck sed -i "/^server_names\s*=/a proxy = '$DNSCRYPT_TOR_SOCKS5_PROXY'" "$DNSCRYPT_CONFIG"
+        DNSCRYPT_CONFIG_UPDATE=true
+    fi
+    if ! grep -q -E "^force_tcp\s*=" "$DNSCRYPT_CONFIG"; then
+        sudocheck sed -i "/^proxy\s*=/a force_tcp = $DNSCRYPT_FORCE_TCP" "$DNSCRYPT_CONFIG"
+        DNSCRYPT_CONFIG_UPDATE=true
+    fi
+    if $DNSCRYPT_CONFIG_UPDATE; then
+        echo -e "${CYAN}- SCRIPT OUTPUT: dnscrypt configuration updated.${RESET}"
+    else
+        echo -e "${CYAN}- SCRIPT OUTPUT: no changes were made to the dnscrypt configuration.${RESET}"
+    fi
+    sudocheck systemctl restart dnscrypt-proxy
+    sudocheck systemctl restart dnscrypt-proxy-resolvconf
+
+    # configure /etc/resolv.conf
+    echo -e "${CYAN}- SCRIPT OUTPUT: backup and configuring /etc/resolv.conf ${RESET}"
+    sudocheck sh -c 'echo "nameserver 127.0.0.1" > /etc/resolv.conf'
 
     # disable ipv6
     if grep -qE "net.ipv6.conf.all.disable_ipv6\s*=\s*1" /etc/sysctl.conf && grep -qE "net.ipv6.conf.default.disable_ipv6\s*=\s*1" /etc/sysctl.conf; then
@@ -268,6 +268,7 @@ revert(){
     trap 'echo "Error stopping services and/or reverting configuration. Check logs/anon_revert.log for more information." >&2; echo "Error occurred at $(date)" >> logs/anon_revert.log' ERR
     
     # stop services if necessary
+    sudocheck systemctl stop dnscrypt-proxy.socket
     sudocheck systemctl stop dnscrypt-proxy
     sudocheck systemctl stop tor
 
