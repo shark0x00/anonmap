@@ -3,14 +3,6 @@
 # Philipp Fragstein
 # info@stonesec.de
 #
-# This script installs and configures the debian packages "tor", "dnscrypt", "proxychains" for anonymizing NMAP port scans if not done yet. 
-# An additional function avoidleak() is implemented to force all traffic through tor.
-# If everything is installed and configured the leak() function checks for potential ip leaks. 
-# - tor uses the tor network for anonymization and is configured to use "DE" entry and exit notes. this can be changed if desired (search for: "CHANGEME")
-# - dnscrypt is used for encrypting DNS queries before sending them into the tor network. THe final destionation is Cloudflare. 
-# - proxychains allows NMAP to use tor's socks4 proxy due to the limited proxy capability of NMAP itself.
-# - (not implemented yet) tortunnel which could be used in case the NMAP scan results are unreliable. This tools uses the tor network with one hop only leading to more performance but less anonymization. 
-# - (not implemented yet) dnsleak test
 
 # color code definition
 RED="\033[31m"
