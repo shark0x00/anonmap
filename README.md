@@ -1,5 +1,5 @@
 # anonmap
-This script was primarily developed to conduct anonymous NMAP scans under Debian 11. It install and configures "tor", "dnscrypt", "nmap" and "proxychains". All existing configuration will be stored in the script dirs backup folder. Stopping the script will revert all changes. An additional function avoidleak() is implemented to force all traffic through tor and proxychains.
+This script was primarily developed to conduct anonymous NMAP scans under Debian 11. It installs and configures "tor", "dnscrypt", "nmap" and "proxychains". All existing configuration will be stored in the script dirs backup folder. Stopping the script will revert all changes. An additional function avoidleak() is implemented to force all traffic through tor and proxychains.
 If everything is installed and configured the leak() function can be used to check for potential IP leaks. 
 - **tor** uses the tor network for anonymization and is configured to use "DE" entry and "DE" exit notes. This country variable can be changed if desired (search for: "CHANGEME").
 - **dnscrypt** is used for encrypting DNS queries before sending them into the tor network. The final destination is Cloudflare. 
