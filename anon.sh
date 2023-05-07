@@ -18,7 +18,7 @@ BACKUPS_FOLDER="$SCRIPT_DIR/backups"
 TOR_PORT="9040"
 DNSCRYPT_CONFIG="/etc/dnscrypt-proxy/dnscrypt-proxy.toml"
 TOR_CONFIG="/etc/tor/torrc"
-PROXYCHAINS_CONFIG="/etc/proxychains.conf"
+PROXYCHAINS_CONFIG="/etc/proxychains4.conf"
 
 logo() {
 echo ""
@@ -57,7 +57,7 @@ install (){
     echo -e "${GREEN}+ SCRIPT OUTPUT: INSTALLING PACKAGES IF NOT PRESENT ${RESET}"
     local PACKAGE0="tor"
     local PACKAGE1="dnscrypt-proxy"
-    local PACKAGE2="proxychains"
+    local PACKAGE2="proxychains4"
     local PACKAGE3="jq"
     local PACKAGE4="nmap"
     local PACKAGE5="iptables"
@@ -95,7 +95,7 @@ configure (){
     echo -e "${CYAN}- SCRIPT OUTPUT: creating backups of configuration files${RESET}"
     sudocheck cp -p "$DNSCRYPT_CONFIG" "$BACKUPS_FOLDER/dnscrypt-proxy.toml.bak"
     sudocheck cp -p "$TOR_CONFIG" "$BACKUPS_FOLDER/torrc.bak"
-    sudocheck cp -p "$PROXYCHAINS_CONFIG" "$BACKUPS_FOLDER/proxychains.conf.bak"
+    sudocheck cp -p "$PROXYCHAINS_CONFIG" "$BACKUPS_FOLDER/proxychains4.conf.bak"
     sudocheck cp -p /etc/resolv.conf "$BACKUPS_FOLDER/resolv.conf.bak"
     sudocheck cp -p /etc/sysctl.conf "$BACKUPS_FOLDER/sysctl.conf.bak"
  
