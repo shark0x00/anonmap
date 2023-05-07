@@ -276,7 +276,7 @@ revert(){
     # revert configuration
     sudocheck cp -p "$BACKUPS_FOLDER/dnscrypt-proxy.toml.bak" "$DNSCRYPT_CONFIG"
     sudocheck cp -p "$BACKUPS_FOLDER/torrc.bak" "$TOR_CONFIG"
-    sudocheck cp -p "$BACKUPS_FOLDER/proxychains.conf.bak" "$PROXYCHAINS_CONFIG"
+    sudocheck cp -p "$BACKUPS_FOLDER/proxychains4.conf.bak" "$PROXYCHAINS_CONFIG"
     sudocheck cp -p "$BACKUPS_FOLDER/resolv.conf.bak" /etc/resolv.conf
     sudocheck cp -p "$BACKUPS_FOLDER/sysctl.conf.bak" /etc/sysctl.conf
 
